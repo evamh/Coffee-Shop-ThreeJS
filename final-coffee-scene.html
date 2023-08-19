@@ -1,0 +1,2132 @@
+<!--
+  Eva Hayek
+  CS 307
+  Assignment 6 - Creative Scene
+
+  ==================================================================================
+  ALL OF THE IMAGES USED IN THIS PROJECT WERE FOUND AT THE FOLLOWING LINKS:
+
+  wood.jpg: https://static.pexels.com/photos/139306/pexels-photo-139306.jpeg
+
+  wallMaterial.jpg: https://www.vandersandengroup.com/sites/default/files/images_brick_joint/vds_075_1024_1.jpg
+
+  ceiling.jpg: https://images.homedepot-static.com/productImages/d12b6c41-bdf2-4809-b1b2-a7512ea1216e/svn/semi-gloss-mono-serra-drop-ceiling-tiles-pantq22f-64_1000.jpg
+  
+  outsideView.jpg: http://hdw7.com/wallpapers/67/bright-sunny-day-yellow-field-sunflowers-sky-clouds-nature.jpg
+
+  Mag1.jpg: https://assets.vogue.com/photos/5891f846153ededd21da5438/master/pass/7-july-emma-watson_165255484705.jpg
+
+  Mag2.jpg: http://discovermagazine.com/~/media/Images/Issue%20Covers/2017/DSC-CV0517web.jpg
+
+  Mag3.jpg: https://image.isu.pub/121114180625-de187442c0ee4004813008f839c79f2a/jpg/page_1.jpg
+
+  speaker-mesh.jpg: https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX25599373.jpg
+
+  coffee-specials.jpg: Eva Hayek
+
+  corkPanel.jpg: http://www.publicdomainpictures.net/pictures/30000/velka/cork-board.jpg
+
+  shelf.jpg: https://www.textures.com/system/gallery/photos/Wood/Planks/Old%20Planks/113591/WoodPlanksOld0151_18_270.jpg
+
+  sprinkles.jpg: https://s3.amazonaws.com/spoonflower/public/design_thumbnails/0059/3547/rrrsprinkles_v2_shop_preview.png
+
+  cake-layered.jpg: https://4.bp.blogspot.com/-2WuBmNU06fA/UvnsyxZ0JxI/AAAAAAAASMo/MA3Bw67KaRY/s1600/IMG_1981.JPG (image was edited from this source)
+
+  sofa-fabric.jpg: https://scotweb-objects.com/images/tartans/moonbeam_36517.jpg
+
+  couchFoot.jpg: http://www.karndean.com/~/media/images/products/swatches/product-listing-images/product-overheads/korlok/rkp8106americanblackwalnutukoh.ashx?w=800&h=800&hash=DA753BE6F917A9F0B5D8F106B1D7390431D40C57
+
+  coffee-table.jpg: http://www.smi-products.com/Ebony_-_EchoWood.JPG
+
+  soil.jpg: https://media.musely.com/u/14b420e1-ab62-40b8-950c-ea7f44bfa5a1.jpg
+
+  plant.jpg: https://inhabitat.com/wp-content/blogs.dir/1/files/2017/04/Leaf-Vein-Structures-889x593.jpg
+
+  frame-material.jpg: http://www.ispsd.com/wp-content/uploads/2013/02/wpid-4-High-Resolution-Wood-Material-Textures-Thumb03.jpg
+
+  art1.jpg: Audrey Elkus
+
+  art2.jpg: Audrey Elkus
+
+  art3.jpg: Maddie Poole
+
+  art4.jpg: Audrey Elkus 
+
+  art5.jpg: Maddie Poole
+
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Coffee Shop Scene</title>
+    <style>
+      
+      canvas {
+          display: block;
+          margin: 10px auto;
+          width: 100%;
+          height: 500px;
+      }
+    </style>
+    <script src="https://cs.wellesley.edu/~cs307/threejs/libs/three-r80.min.js"></script>
+    <script src="https://cs.wellesley.edu/~cs307/threejs/libs/OrbitControls.js"></script>
+    <script src="https://cs.wellesley.edu/~cs307/threejs/libs/dat.gui.js"></script>
+    <script src="https://cs.wellesley.edu/~cs307/threejs/libs/tw-fa16.js"></script>
+  </head>
+<body>
+
+<h1>Coffee Shop Scene</h1>
+
+<script>
+
+//============================================
+var colors = [
+  
+  /*
+  new THREE.Color("pink"),
+  new THREE.Color("blue"),
+  new THREE.Color("orange"),
+  new THREE.Color("purple"),
+  //new THREE.Color("red"),
+  new THREE.Color("green"),
+  new THREE.Color("cyan"),
+  new THREE.Color("magenta"),
+  new THREE.Color("violet"),
+  */
+
+  0x7b9cd1,
+  0xef7a56,
+  0xfff9aa,
+  0xffc4f4,
+  0x537a4d,
+  0x3aa571,
+  0x3aa571,
+  0xff4530,
+  0x991047,
+  0xa82a2e,
+  0xa80005,
+  0xff9347,
+
+]
+
+var cupcakeColors = [
+  new THREE.Color("pink"),
+  new THREE.Color("white"),
+  new THREE.Color("brown"),
+]
+
+var cakeColors = {
+  strawberry: new THREE.Color("pink"),
+  vanilla: new THREE.Color("white"),
+  chocolate: new THREE.Color("brown"),
+  yellow: new THREE.Color("yellow"),
+}
+
+var plateColors = {
+  white: 0xFFFFFF,
+  blue: 0x85c2c4,
+}
+
+var steamObjects = [];
+var musicNotes = [];
+
+//============================================
+//CREATE ROOM
+var roomParams = {
+  roomWidth: 300,
+  roomHeight: 200,
+  roomDepth: 300,
+
+} 
+
+function createRoom(roomMaterials) {
+  var rp = roomParams;
+  var roomGeom = new THREE.BoxGeometry(rp.roomWidth,rp.roomHeight,rp.roomDepth);
+
+  var materialArray = [];
+  var ceilingColor= 0xFFFFFF;
+  for(var i = 0; i < 6; i++) {
+      if (i == 3) { materialArray.push(roomMaterials[0]); } //floor
+      if (i == 2) { materialArray.push(roomMaterials[2]); } //ceiling
+      //if (i == 1) { materialArray.push(roomMaterials[3]); } //window wall
+      else { materialArray.push(roomMaterials[1]); } //walls
+  }
+
+  var roomMaterial = new THREE.MeshFaceMaterial(materialArray);
+  var roomMesh = new THREE.Mesh(roomGeom, roomMaterial);
+  roomMesh.position.y = rp.roomHeight/2;
+
+  return roomMesh;
+}
+
+/*
+function createRoom() {
+  var rp = roomParams;
+  var roomGeom = new THREE.BoxGeometry(rp.roomWidth,rp.roomHeight,rp.roomDepth);
+
+
+  var materialArray = [];
+  var faceColors = [0xc9f4ff,0xc9f4ff,0xc9f4ff,0xaa8652,0xc9f4ff,0xc9f4ff];
+  for(var i = 0; i < 6; i++) {
+      materialArray.push(new THREE.MeshPhongMaterial({ color: faceColors[i], side: THREE.BackSide}));
+  }
+
+  // create mesh face material and a room mesh, and add the mesh to the scene
+  var roomMaterial = new THREE.MeshFaceMaterial(materialArray);
+  var roomMesh = new THREE.Mesh(roomGeom, roomMaterial);
+  roomMesh.position.y = rp.roomHeight/2;
+  
+  return roomMesh;
+}
+*/
+
+//============================================
+var windowParams = {
+
+  windowWidth: roomParams.roomDepth * 0.8,
+  windowHeight: roomParams.roomHeight/2,
+  windowDepth: 1,
+
+  windowColor: 0xFFFFFF,
+
+}
+
+function createWindow() {
+
+  var wp = windowParams;
+  var wallWindow = new THREE.Object3D();
+
+  var insideWindowGeom = new THREE.BoxGeometry(wp.windowWidth, wp.windowHeight, wp.windowDepth);
+  //var insideWindowMat = outsideViewMaterial;
+  var insideWindowMesh = new THREE.Mesh(insideWindowGeom, outsideViewMaterial);
+  insideWindowMesh.position.z = 1;
+  wallWindow.add(insideWindowMesh);
+
+  var outsidePanelGeom = new THREE.BoxGeometry(wp.windowWidth+10, wp.windowHeight+10, wp.windowDepth);
+  var panelMat = new THREE.MeshPhongMaterial({color: wp.windowColor});
+  var outsidePanelMesh = new THREE.Mesh(outsidePanelGeom, panelMat);
+
+  wallWindow.add(outsidePanelMesh);
+
+
+  var verticalPanelGeom = new THREE.BoxGeometry(2, wp.windowHeight, wp.windowDepth);
+  var verticalPanel1 = new THREE.Mesh(verticalPanelGeom, panelMat);
+  verticalPanel1.position.set(-wp.windowWidth/6, 0, 2);
+  wallWindow.add(verticalPanel1);
+
+  var verticalPanel2 = new THREE.Mesh(verticalPanelGeom, panelMat);
+  verticalPanel2.position.set(-wp.windowWidth/3, 0, 2);
+  wallWindow.add(verticalPanel2);
+
+  var verticalPanel3 = new THREE.Mesh(verticalPanelGeom, panelMat);
+  verticalPanel3.position.set(wp.windowWidth/2, 0, 2);
+  wallWindow.add(verticalPanel3);
+
+  var verticalPanel4 = new THREE.Mesh(verticalPanelGeom, panelMat);
+  verticalPanel4.position.set(wp.windowWidth/3, 0, 2);
+  wallWindow.add(verticalPanel4);
+
+  var verticalPanel5 = new THREE.Mesh(verticalPanelGeom, panelMat);
+  verticalPanel5.position.set(wp.windowWidth/6, 0, 2);
+  wallWindow.add(verticalPanel5);
+
+  var horizontalPanelGeom = new THREE.BoxGeometry(wp.windowWidth, 2, wp.windowDepth);
+  var horizontalPanel1 = new THREE.Mesh(horizontalPanelGeom, panelMat);
+  horizontalPanel1.position.set(0, -wp.windowHeight/4, 2);
+  wallWindow.add(horizontalPanel1);
+
+  var horizontalPanel2 = new THREE.Mesh(horizontalPanelGeom, panelMat);
+  horizontalPanel2.position.set(0, wp.windowHeight/4, 2);
+  wallWindow.add(horizontalPanel2);
+
+
+
+  //wallWindow.position.set((wp.windowWidth+10)/2, (wp.windowHeight+10)/2, wp.windowDepth/2);
+  return wallWindow; 
+
+}
+
+//============================================
+function createFrame(width, height) {
+  var frame = new THREE.Object3D();
+
+  var hpG = new THREE.BoxGeometry(width, 2, 0.1);
+  var hp1 = new THREE.Mesh(hpG, frameMaterial);
+  var hp2 = new THREE.Mesh(hpG, frameMaterial);
+  hp1.position.y = -height/2;
+  hp2.position.y = height/2;
+
+  frame.add(hp1);
+  frame.add(hp2);
+
+  var vpG = new THREE.BoxGeometry(2, height, 0.1);
+  var vp1 = new THREE.Mesh(vpG, frameMaterial);
+  var vp2 = new THREE.Mesh(vpG, frameMaterial);
+  vp1.position.set(-width/2 + 0.25, 0, 0);
+  vp2.position.set(width/2 - 0.25, 0, 0);
+
+  frame.add(vp1);
+  frame.add(vp2);
+
+  var glass = new THREE.BoxGeometry(width-1, height-0.5, 0.01);
+  var glassMat = new THREE.MeshPhongMaterial({color: 0xFFFFFF, transparent: true, opacity: 0.05});
+  var glassMesh = new THREE.Mesh(glass, glassMat);
+
+  glassMesh.position.z = 0.1;
+
+  frame.add(glassMesh);
+
+  return frame;
+
+}
+
+function createPictureFrame(width, height, artMat) {
+
+  var pictureFrame = new THREE.Object3D();
+
+  //Artwork
+  var artGeom = new THREE.BoxGeometry(width-0.5, height-0.5, 0.1);
+  //var artMesh = new THREE.Mesh(artGeom);
+  var artMesh = new THREE.Mesh(artGeom, artMat);
+
+  pictureFrame.add(artMesh);
+
+  //Frame
+  var frame = new createFrame(width, height);
+  frame.position.z = 0.2;
+  pictureFrame.add(frame);
+
+
+  return pictureFrame;
+
+}
+
+//============================================
+//CREATE COUNTER
+var counterParams = {
+
+  counterWidth: 300, 
+  counterHeight: 50, 
+  counterDepth: 30,
+  counterTopHeight: 5,
+
+  legWidth: 5,
+  legHeight: 10, 
+  legDepth: 4,
+
+  counterColor: 0x004201,
+  legColor: 0xaf8b5b,
+  //legColor: new THREE.Color("gray"),
+
+
+}
+
+function createCounterLegs(legWidth, legHeight, legDepth) {
+
+  var legGeom = new THREE.BoxGeometry(legWidth, legHeight, legDepth);
+  var legMat = new THREE.MeshPhongMaterial({color: counterParams.legColor, side: THREE.DoubleSide});
+  var legMesh = new THREE.Mesh(legGeom, legMat);
+
+  return legMesh;
+
+}
+
+function createCounter() {
+  var cp = counterParams;
+
+  var counter = new THREE.Object3D();
+
+  var mainCounterGeom = new THREE.BoxGeometry(cp.counterWidth, cp.counterHeight, cp.counterDepth);
+  var mainCounterMat = new THREE.MeshBasicMaterial({color: cp.counterColor, side: THREE.DoubleSide});
+  var mainCounterMesh = new THREE.Mesh(mainCounterGeom, mainCounterMat);
+  counter.add(mainCounterMesh);
+
+  var leg1 = createCounterLegs(cp.legWidth, cp.legHeight, cp.legDepth);
+  var leg2 = createCounterLegs(cp.legWidth, cp.legHeight, cp.legDepth);
+  var leg3 = createCounterLegs(cp.legWidth, cp.legHeight, cp.legDepth);
+  var leg4 = createCounterLegs(cp.legWidth, cp.legHeight, cp.legDepth);
+
+  var yPos = - (cp.counterHeight/2 + cp.legHeight/2);
+  leg1.position.set(-cp.counterWidth/2 + cp.legWidth/2, yPos, cp.counterDepth/2 - cp.legDepth/2);
+  leg2.position.set(cp.counterWidth/2 - cp.legWidth/2, yPos, cp.counterDepth/2 - cp.legDepth/2);
+  leg3.position.set(-cp.counterWidth/2 + cp.legWidth/2, yPos, -cp.counterDepth/2 + cp.legDepth/2);
+  leg4.position.set(cp.counterWidth/2 - cp.legWidth/2, yPos, -cp.counterDepth/2 + cp.legDepth/2);
+  
+  counter.add(leg1);
+  counter.add(leg2);
+  counter.add(leg3);
+  counter.add(leg4);
+
+  var counterTopGeom = new THREE.BoxGeometry(cp.counterWidth, cp.counterTopHeight, cp.counterDepth);
+  var counterTopMat = new THREE.MeshPhongMaterial({color: cp.legColor, side: THREE.DoubleSide});
+  var counterTopMesh = new THREE.Mesh(counterTopGeom, counterTopMat);
+
+  counterTopMesh.position.set(0, cp.counterHeight/2 + cp.counterTopHeight/2, 0);
+  counter.add(counterTopMesh);
+
+  counter.position.y = cp.counterHeight/2 + cp.legHeight;
+
+  return counter;
+}
+
+//============================================
+//CREATE REGISTER
+var registerParams = {
+
+  registerBaseWidth: 25,
+  registerBaseHeight: 15,
+  registerBaseDepth: 25,
+
+  standRadius: 2,
+  standHeight: 10,
+
+  screenWidth: 15, 
+  screenHeight: 8,
+  screenDepth: 4,
+
+  registerColor: 0x72716f,
+  screenColor: new THREE.Color("black"),
+
+}
+
+function createRegister() {
+  var rp = registerParams;
+  var register = new THREE.Object3D();
+
+  var registerBaseGeom = new THREE.BoxGeometry(rp.registerBaseWidth, rp.registerBaseHeight, rp.registerBaseDepth);
+  var registerBaseMat = new THREE.MeshPhongMaterial({color: rp.registerColor, side: THREE.DoubleSide });
+  var registerBaseMesh = new THREE.Mesh(registerBaseGeom, registerBaseMat);
+
+  register.add(registerBaseMesh);
+
+  var standGeom = new THREE.CylinderGeometry(rp.standRadius, rp.standRadius, rp.standHeight, 10, 10);
+  var standMat = new THREE.MeshPhongMaterial({color: rp.registerColor, side: THREE.DoubleSide });
+  var standMesh = new THREE.Mesh(standGeom, standMat);
+
+  var xPos = -rp.registerBaseWidth/2 + 5;
+  var zPos = rp.registerBaseDepth/2 - 5;
+  standMesh.position.set(xPos, rp.registerBaseHeight/2 + rp.standHeight/2, zPos);
+  register.add(standMesh);
+
+  var screenGeom = new THREE.BoxGeometry(rp.screenWidth, rp.screenHeight, rp.screenDepth);
+  var screenMat = new THREE.MeshBasicMaterial({color: rp.screenColor, side: THREE.DoubleSide});
+  var screenMesh = new THREE.Mesh(screenGeom, screenMat);
+
+  screenMesh.position.set(xPos,rp.registerBaseHeight/2 + rp.standHeight + rp.screenHeight/2 ,zPos);
+  register.add(screenMesh);
+
+  register.position.y = rp.registerBaseHeight/2;
+  return register;
+}
+
+//============================================
+//CREATE A TIPS JAR
+
+var tipJarParams = {
+
+  tjRadius: 5,
+  tjHeight: 10,
+  tjColor: new THREE.Color("gray"),
+}
+
+function createTipJar() {
+  var tjp = tipJarParams;
+  var tipJar = new THREE.Object3D();
+
+  
+  var tpGeom = new THREE.CylinderGeometry(tjp.tjRadius, tjp.tjRadius, tjp.tjHeight, 10, 10);
+  var tpMat = new THREE.MeshPhongMaterial({color: tjp.tjColor, side: THREE.DoubleSide});
+  var tpMesh = new THREE.Mesh(tpGeom, tpMat);
+
+  tipJar.add(tpMesh);
+
+  tipJar.position.y = tjp.tjHeight/2;
+
+  return tipJar;
+}
+
+//============================================
+//CREATE A TABLE
+var tableParams = {
+  tableTopRadius: 30,
+  tableTopHeight: 4, 
+  tableColor: new THREE.Color(0xc47e3c),
+  tableLegRadius: 1,
+  tableLegHeight: 40,
+
+}
+
+function createTableLeg() {
+  var tp = tableParams;
+  var tableLegGeom = new THREE.CylinderGeometry(tp.tableLegRadius, tp.tableLegRadius, tp.tableLegHeight, 20, 20);
+  var tableLegMaterial = new THREE.MeshBasicMaterial({color: tp.tableColor});
+  var tableLeg = new THREE.Mesh(tableLegGeom, tableLegMaterial);
+
+  return tableLeg;
+}
+
+function createTable() {
+
+  var table = new THREE.Object3D();
+  var tp = tableParams;
+
+  var tableTopGeom = new THREE.CylinderGeometry(tp.tableTopRadius, tp.tableTopRadius, tp.tableTopHeight, 20, 20);
+  //var tableTopMaterial = new THREE.MeshPhongMaterial({color: new THREE.Color("brown")});
+  var tableTopMaterial = new THREE.MeshBasicMaterial({color: tp.tableColor});
+  var tableTop = new THREE.Mesh(tableTopGeom, tableTopMaterial);
+
+  table.add(tableTop);
+
+  var distance = tp.tableTopRadius * 0.5;
+
+  var leg1 = new createTableLeg();
+  leg1.position.set(distance, -tp.tableLegHeight/2, distance);
+  table.add(leg1);
+
+  var leg2 = new createTableLeg();
+  leg2.position.set(distance, -tp.tableLegHeight/2, -distance);
+  table.add(leg2);
+
+  var leg3 = new createTableLeg();
+  leg3.position.set(-distance, -tp.tableLegHeight/2, distance);
+  table.add(leg3);
+
+  var leg4 = new createTableLeg(tp);
+  leg4.position.set(-distance, -tp.tableLegHeight/2, -distance);
+  table.add(leg4);
+
+  return table;
+
+}
+//============================================
+//CREATE A COFFEE MUG
+var coffeeParams = {
+  coffeeMugWidth: 5,
+  coffeeMugHeight: 10,
+  coffeeMugColor: 0xd63175,
+  coffeeHandleHeight: 5,
+  coffeeColor: 0x421c01,
+
+  steamColor: new THREE.Color("black"),
+
+}
+
+function createSteam() {
+
+  var cp = coffeeParams;
+  var controlPoints = [ [0,0,0],
+                      [5,4,0],
+                      [-5,8,0],
+                      [0,10,0] ];
+  var curveGeom = TW.createBezierCurve(controlPoints,20);
+  var curveMat = new THREE.LineBasicMaterial( { color: cp.steamColor, linewidth: 5 } );
+  var curve = new THREE.Line( curveGeom, curveMat );
+
+  steamObjects.push(curve);
+
+  return curve;
+}
+
+function createCoffeeMug(withCoffee, withSteam) {
+
+  var coffeeMug = new THREE.Object3D();
+  var cp = coffeeParams;
+
+  var coffeeMugColor = colors[Math.floor( Math.random() * colors.length ) ];
+  //var coffeeHandleColor = colors[Math.floor( Math.random() * colors.length ) ];
+
+  //var coffeeMugGeom = new THREE.TorusGeometry(50, 1, 16, 100);
+  var coffeeMugGeom = new THREE.CylinderGeometry(cp.coffeeMugWidth, cp.coffeeMugWidth, cp.coffeeMugHeight, 10, 10, true);
+  var coffeeMugMaterial = new THREE.MeshPhongMaterial({color: coffeeMugColor, side: THREE.DoubleSide});
+  var coffeeMugMesh = new THREE.Mesh(coffeeMugGeom, coffeeMugMaterial);
+
+  coffeeMug.add(coffeeMugMesh);
+
+  var coffeeHandleGeom = new THREE.TorusGeometry((cp.coffeeMugHeight/2)*0.7, 0.8, 10, 10, Math.PI);
+  var coffeeHandleMaterial = new THREE.MeshPhongMaterial({color: coffeeMugColor, side: THREE.DoubleSide});
+  var coffeeHandleMesh = new THREE.Mesh(coffeeHandleGeom, coffeeHandleMaterial);
+
+  coffeeHandleMesh.rotation.z = Math.PI/2;
+  coffeeHandleMesh.position.x = -cp.coffeeMugWidth;
+  coffeeMug.add(coffeeHandleMesh);
+
+  if(withCoffee ) {
+    var coffeeGeom = new THREE.CylinderGeometry(cp.coffeeMugWidth-1, cp.coffeeMugWidth, 2, 10, 10);
+    var coffeeMat = new THREE.MeshPhongMaterial({color: cp.coffeeColor});
+    var coffeeMesh = new THREE.Mesh(coffeeGeom, coffeeMat);
+
+    coffeeMesh.position.y = (cp.coffeeMugHeight/2) * 0.70;
+
+    coffeeMug.add(coffeeMesh);
+  }
+
+  
+  if(withSteam) {
+
+    var steam = new createSteam();
+
+    steam.position.set(0, cp.coffeeMugHeight * 0.7, 0);
+
+    coffeeMug.add(steam);
+  }
+  
+  
+  return coffeeMug;
+
+}
+
+//============================================
+//CREATE A CHAIR
+
+var chairParams = {
+  chairBackWidth: 25,
+  chairBackHeight: 35, 
+  chairSeatWidth: 25,
+  chairSeatHeight: 30,
+
+  chairLegRadius: 1,
+  chairLegHeight: 20,
+
+  chairFootRadius: 1,
+  chairFootHeight: 20,
+
+  chairLegColor: new THREE.Color("gray"),
+  chairColor: 0xf9bf43,
+
+}
+
+function createChairLeg() {
+  var cp = chairParams;
+
+  var leg = new THREE.Object3D();
+
+  var legGeom = new THREE.CylinderGeometry(cp.chairLegRadius, cp.chairLegRadius, cp.chairLegHeight, 20, 20);
+  var legMat = new THREE.MeshPhongMaterial({color: cp.chairLegColor, side: THREE.DoubleSide});
+  var legMesh = new THREE.Mesh(legGeom, legMat);
+  leg.add(legMesh);
+
+  var footGeom = new THREE.CylinderGeometry(cp.chairFootRadius, cp.chairFootRadius, cp.chairFootHeight, 20, 20);
+  var footMat = new THREE.MeshPhongMaterial({color: cp.chairLegColor, side: THREE.DoubleSide});
+  
+  var footMesh1 = new THREE.Mesh(footGeom, footMat);
+  footMesh1.rotation.z = Math.PI/2;
+  footMesh1.position.set(0, -cp.chairLegHeight/2, 0);
+  footMesh1.rotation.x = Math.PI/3;
+  leg.add(footMesh1);
+
+  var footMesh2 = new THREE.Mesh(footGeom, footMat);
+  footMesh2.rotation.z = Math.PI/2;
+  footMesh2.position.set(0, -cp.chairLegHeight/2, 0);
+  footMesh2.rotation.y = Math.PI/2;
+  leg.add(footMesh2);
+
+  return leg;
+
+}
+
+function createChair() {
+
+  var chair = new THREE.Object3D();
+
+  var cp = chairParams;
+
+  var chairBackGeom = new THREE.BoxGeometry(cp.chairBackWidth, cp.chairBackHeight, 1);
+  var chairBackMat = new THREE.MeshBasicMaterial({color: cp.chairColor, side: THREE.DoubleSide});
+  var chairBackMesh = new THREE.Mesh(chairBackGeom, chairBackMat);
+
+  var chairSeatGeom = new THREE.BoxGeometry(cp.chairSeatWidth, cp.chairSeatHeight, 1);
+  var chairSeatMat = new THREE.MeshBasicMaterial({color: cp.chairColor, side: THREE.DoubleSide});
+  var chairSeatMesh = new THREE.Mesh(chairSeatGeom, chairSeatMat);
+
+  chairSeatMesh.rotation.x = Math.PI/2;
+  chairSeatMesh.position.set(0, -cp.chairBackHeight/2, cp.chairSeatHeight/2);
+
+  chair.add(chairBackMesh);
+  chair.add(chairSeatMesh);
+
+  var leg = new createChairLeg();
+  leg.position.set(0, -cp.chairLegHeight/2+ -cp.chairSeatHeight/2 - 2, cp.chairSeatHeight/2);
+  chair.add(leg);
+
+  return chair;
+
+}
+
+//============================================
+var plateParams = {
+  plateHeight: 0.5,
+  //plateColor: new THREE.Color("white"),
+}
+
+function createPlate(plateRadius, plateColor) {
+
+  //Plate
+  var plateGeom = new THREE.CylinderGeometry(plateRadius, plateRadius, plateParams.plateHeight, 200, 200);
+  var plateMat = new THREE.MeshPhongMaterial({color: plateColor});
+  var plateMesh = new THREE.Mesh(plateGeom, plateMat);
+
+  return plateMesh;
+
+}
+//============================================
+//CREATE A CUPCAKE 
+
+var cupcakeParams = {
+
+  cupcakeBaseWidth: 4,
+  cupcakeBaseHeight: 7,
+  icingTube: 1, 
+  cupcakeColor: 0xffd97a,
+
+  bottomIcingRadius: 2,
+  plateRadius: 8,
+
+}
+
+var plateParams = {
+  plateHeight: 1,
+}
+
+
+function createIcingSwirl(number, icingColor) {
+
+  var cp = cupcakeParams;
+  //var swirlPercent = (number/3) * cp.bottomIcingRadius;
+
+  var swirlPercent = (number/3) * cp.cupcakeBaseWidth*0.75;
+  var swirlGeom = new THREE.TorusGeometry(swirlPercent, cp.icingTube, 10, 10 );
+  var swirlMat = new THREE.MeshBasicMaterial({color: icingColor});
+  var swirlMesh = new THREE.Mesh(swirlGeom, swirlMat);
+
+  swirlMesh.rotation.x = Math.PI/2;
+  swirlMesh.position.y = cp.icingTube * (3-number);
+  return swirlMesh;
+}
+
+function createIcing() {
+  var cp = cupcakeParams;
+
+  var icing = new THREE.Object3D();
+
+  var icingColor = cupcakeColors[Math.floor( Math.random() * cupcakeColors.length ) ];
+
+  var bottomSwirlMesh = new createIcingSwirl(3, icingColor);
+  var middleSwirlMesh = new createIcingSwirl(2, icingColor);
+  var topSwirlMesh = new createIcingSwirl(1, icingColor);
+
+  icing.add(bottomSwirlMesh);
+  icing.add(middleSwirlMesh);
+  icing.add(topSwirlMesh);
+
+  return icing;
+
+}
+
+function createCupcake(withPlate) {
+  var cp = cupcakeParams;
+  var cupcake = new THREE.Object3D();
+
+  var wrapperColor = colors[Math.floor( Math.random() * colors.length ) ];
+  var difference = cp.cupcakeBaseHeight * 0.8;
+
+  var wrapperGeom = new THREE.CylinderGeometry(cp.cupcakeBaseWidth*1.1, cp.cupcakeBaseWidth*0.75*1.1, difference, 10);
+  var wrapperMat = new THREE.MeshBasicMaterial({color: wrapperColor});
+  var wrapperMesh = new THREE.Mesh(wrapperGeom, wrapperMat);
+  wrapperMesh.position.y = -(cp.cupcakeBaseHeight- (difference));
+  cupcake.add(wrapperMesh);
+
+  var cupcakeBaseGeom = new THREE.CylinderGeometry(cp.cupcakeBaseWidth, cp.cupcakeBaseWidth*0.75, cp.cupcakeBaseHeight, 10);
+  var cupcakeBaseMat = new THREE.MeshBasicMaterial({color: cupcakeParams.cupcakeColor});
+  var cupcakeMesh = new THREE.Mesh(cupcakeBaseGeom, cupcakeBaseMat);
+  cupcake.add(cupcakeMesh);
+
+  var icing = new createIcing(cupcakeParams);
+  icing.position.y = cp.cupcakeBaseHeight/2;
+  cupcake.add(icing);
+
+  /*
+  var icingGeom =  new THREE.SphereGeometry( cp.cupcakeBaseWidth*0.8, 10, 10, 0, Math.PI * 2, 0, Math.PI/2);
+  var icingMat = new THREE.MeshBasicMaterial({color: cp.icingColor});
+  var icingMesh = new THREE.Mesh(icingGeom, icingMat);
+  icingMesh.position.y = cp.cupcakeBaseHeight/2;
+  cupcake.add(icingMesh);
+  */
+
+  if(withPlate) {
+    //Plate
+    var plateMesh = new createPlate(cp.plateRadius, plateColors.white);
+    plateMesh.position.y = -( cp.cupcakeBaseHeight/2 + plateParams.plateHeight);
+    cupcake.add(plateMesh);
+
+    cupcake.position.y = cp.cupcakeBaseHeight/2 + plateParams.plateHeight/2;
+
+  }
+
+  return cupcake;
+
+}
+
+//============================================
+var cakeParams = {
+  cakeRadius: 10,
+  cakeHeight: 8,
+  icingRadius: 0.8, 
+  icingHeight: 1.2,
+
+  plateRadius: 8,
+
+  cakeSliceRadius: Math.PI/8,
+}
+
+function createCakeIcing(icingColor, sliceRadius) {
+
+  var cp = cakeParams;
+
+  //var icingGeom = new THREE.TorusGeometry(cp.cakeRadius, cp.icingRadius, 20, 20);
+  var icingGeom = new THREE.TorusGeometry(cp.cakeRadius, cp.icingRadius, 20, 20, sliceRadius);
+  var icingMat = new THREE.MeshBasicMaterial({color: icingColor, side: THREE.DoubleSide});
+  var icingMesh = new THREE.Mesh(icingGeom, icingMat);
+
+  icingMesh.rotation.x = Math.PI/2;
+  return icingMesh;
+
+
+}
+
+function createCakeInside() {
+
+  var cp = cakeParams;
+
+  var insideGeom = new THREE.BoxGeometry(cp.cakeRadius-0.1, cp.cakeHeight - 0.1, 0.1);
+  var insideMesh = new THREE.Mesh(insideGeom, cakeLayeredMaterial);
+
+  return insideMesh;
+
+}
+
+function createCake(cakeColor, icingColor, slice = false) {
+  var cp = cakeParams;
+  var cake = new THREE.Object3D();
+
+  var sliceRadius;
+  if (slice == false) { sliceRadius = 2 * Math.PI; }
+  else { sliceRadius = cp.cakeSliceRadius; }
+
+  var cakeGeom = new THREE.CylinderGeometry(cp.cakeRadius, cp.cakeRadius, cp.cakeHeight, 20, 20, false, 0, sliceRadius);
+  var cakeMat = new THREE.MeshBasicMaterial({color: cakeColor, side: THREE.DoubleSide});
+  //var cakeMesh = new THREE.Mesh(cakeGeom, cakeMat);
+  var cakeMesh = new THREE.Mesh(cakeGeom, sprinklesMaterial);
+  cake.add(cakeMesh);
+
+  /*
+  var cakeTopGeom = new THREE.CircleGeometry(cp.cakeRadius, 20);
+  var cakeTopMesh = new THREE.Mesh(cakeTopGeom, sprinklesMaterial);
+  cakeTopMesh.position.y = cp.cakeHeight/2 + 0.5;
+  cakeTopMesh.rotation.x = Math.PI/2;
+  cake.add(cakeTopMesh);
+  */
+
+
+  //Top icing
+  var topIcing = new createCakeIcing(icingColor, sliceRadius);
+  topIcing.position.y = cp.cakeHeight/2;
+  topIcing.rotation.z = Math.PI/2 - sliceRadius;
+  cake.add(topIcing);
+
+  //Bottom icing
+  var bottomIcing = new createCakeIcing(icingColor, sliceRadius);
+  bottomIcing.position.y = -cp.cakeHeight/2;
+  bottomIcing.rotation.z = Math.PI/2 - sliceRadius;
+  cake.add(bottomIcing);
+
+  if( slice ) {
+
+    //Create the triangles
+    var inside1 = new createCakeInside();
+    inside1.rotation.y = Math.PI/2;
+    inside1.position.x = 0.1;
+    inside1.position.z = cp.cakeRadius/2;
+    cake.add(inside1);
+
+    var inside2 = new createCakeInside();
+    inside2.rotation.y = -Math.PI/2 + cp.cakeSliceRadius;
+    inside2.position.z = cp.cakeRadius/2 - 0.5;
+    //inside2.position.x = Math.sqrt( cp.cakeRadius * cp.cakeRadius/2 ); //cp.cakeSliceRadius * cp.cakeRadius;
+    inside2.position.x = 1.85; //cp.cakeRadius/ ( 2 * Math.PI / cp.cakeSliceRadius);
+    cake.add(inside2);
+
+    //Add inside
+
+  }
+  
+  return cake;
+}
+
+function createCakeSlice(cakeColor, icingColor) {
+  var slice = new THREE.Object3D();
+
+  var cakeSlice = new createCake(cakeColor, icingColor, true);
+  cakeSlice.rotation.z = Math.PI/2;
+  cakeSlice.position.z = -cakeParams.cakeRadius/2;
+
+  slice.add(cakeSlice);
+
+  //Create plate
+  var plate = new createPlate(cakeParams.plateRadius, plateColors.blue);
+  //plate.position.y = -
+
+  slice.add(plate);
+
+  return slice;
+
+}
+
+//============================================
+//CREATE A TABLE SET
+//Combine a table, two chairs, two coffee mugs and a cupcake to create a set
+
+function createTableSet() {
+
+  var tableSet = new THREE.Object3D();
+
+  var table = new createTable();
+  tableSet.add(table);
+
+  //var chairColor = colors[Math.floor( Math.random() * colors.length ) ];
+
+  var chair1 = new createChair();
+  chair1.rotation.y = Math.PI/2;
+  chair1.position.set(-(tableParams.tableTopRadius + 15), 0, 0);
+  tableSet.add(chair1);
+
+  var chair2 = new createChair();
+  chair2.rotation.y = -Math.PI/2;
+  chair2.position.set((tableParams.tableTopRadius + 15), 0, 0);
+  tableSet.add(chair2);
+
+  var coffeeMug1 = new createCoffeeMug(true, true);
+  coffeeMug1.position.set(-tableParams.tableTopRadius*0.6, (coffeeParams.coffeeMugHeight/2 + tableParams.tableTopHeight/2), 0);
+  tableSet.add(coffeeMug1);
+
+  var coffeeMug2 = new createCoffeeMug(true, true);
+  coffeeMug2.position.set(tableParams.tableTopRadius*0.6, (coffeeParams.coffeeMugHeight/2 + tableParams.tableTopHeight/2), 0);
+  coffeeMug2.rotation.y = Math.PI;
+  tableSet.add(coffeeMug2);
+
+  var cupcake = new createCupcake(true);
+  //cupcake.position.set(0, cupcakeParams.cupcakeBaseHeight/2 + tableParams.tableTopHeight/2, tableParams.tableTopRadius * 0.4);
+  cupcake.position.y = cupcakeParams.cupcakeBaseHeight/2 + plateParams.plateHeight + tableParams.tableTopHeight/2;
+  cupcake.position.z = tableParams.tableTopRadius * 0.4;
+  tableSet.add(cupcake);
+
+  tableSet.position.set(0, tableParams.tableLegHeight, 0);
+  return tableSet;
+
+}
+
+//============================================
+//Create a counter and a register 
+
+function createTotalCounter() {
+
+  var finalCounter = new THREE.Object3D();
+
+  var counter = new createCounter();
+  finalCounter.add(counter);
+
+  var yPos = counterParams.legHeight + counterParams.counterHeight + counterParams.counterTopHeight;
+
+  //Register
+  var register = new createRegister(registerParams);
+  register.position.x = counterParams.counterWidth * 0.25;
+  register.position.y = yPos + registerParams.registerBaseHeight/2;
+  //register.position.set(counterParams.counterWidth/2 - 80, yPos, 0); 
+  finalCounter.add(register);
+
+
+  //iPod
+  var ipodAndStand = new createIpodAndStand();
+  ipodAndStand.position.x = counterParams.counterWidth * 0.4;
+  ipodAndStand.position.y = yPos + speakerParams.speakerHeight/2; 
+  ipodAndStand.position.z = counterParams.counterDepth * 0.1;
+  //ipodAndStand.position.set(counterParams.counterWidth * 0.40, yPos, counterParams.counterDepth * 0.1); 
+  ipodAndStand.rotation.y = -Math.PI/8;
+  finalCounter.add(ipodAndStand);
+
+  //Glass container
+  var glassContainer = new createTotalContainer();
+  glassContainer.position.set(-counterParams.counterWidth * 0.2, yPos, -glassContainerParams.containerRadius/2);
+  finalCounter.add(glassContainer)
+
+
+  return finalCounter;
+
+}
+
+//============================================
+var couchParams = {
+
+  couchWidth: 40,
+
+  couchTopHeight: 35, 
+  couchTopDepth: 10, 
+
+  couchBaseHeight: 15, 
+  couchBaseDepth: 45, 
+  
+  couchFootWidth: 4, 
+  couchFootHeight: 10, 
+  couchFootDepth: 4, 
+
+  armRestRadius: 8,
+  footColor: new THREE.Color("gray"),
+
+}
+
+function createCouchFoot() {
+  var cp = couchParams;
+  var footGeom = new THREE.BoxGeometry(cp.couchFootWidth, cp.couchFootHeight, cp.couchFootDepth);
+  var footMesh = new THREE.Mesh(footGeom, sofaMaterials[1]);
+
+  return footMesh;
+
+}
+
+function createArmRest() {
+  var cp = couchParams;
+
+  var armRestGeom = new THREE.CylinderGeometry(cp.armRestRadius, cp.armRestRadius, cp.couchBaseDepth, 20, 20);
+  var armRestMesh = new THREE.Mesh(armRestGeom, sofaMaterials[0]);
+
+  armRestMesh.rotation.x = Math.PI/2;
+  return armRestMesh;
+
+
+}
+
+function createCouchSection() {
+
+  var cp = couchParams;
+  var couchSection = new THREE.Object3D();
+
+  var couchTopGeom = new THREE.BoxGeometry(cp.couchWidth, cp.couchTopHeight, cp.couchTopDepth);
+  var couchTopMesh = new THREE.Mesh(couchTopGeom, sofaMaterials[0]);
+  couchTopMesh.position.z = cp.couchTopDepth/2;
+
+  couchSection.add(couchTopMesh);
+
+  var couchBaseGeom  = new THREE.BoxGeometry(cp.couchWidth, cp.couchBaseHeight, cp.couchBaseDepth);
+  var couchBaseMesh = new THREE.Mesh(couchBaseGeom, sofaMaterials[0]);
+
+  //couchBaseMesh.rotation.x = Math.PI/2;
+  couchBaseMesh.position.y = -( cp.couchTopHeight/2 + cp.couchBaseHeight/2);
+  couchBaseMesh.position.z = cp.couchBaseDepth/2;
+
+  couchSection.add(couchBaseMesh);
+
+
+  return couchSection;
+
+}
+
+function createCouch() {
+  var cp = couchParams;
+  var couch = new THREE.Object3D();
+
+  var section1 = new createCouchSection();
+  //section1.position.x = -cp.couchWidth/2;
+  section1.position.x = cp.couchWidth/2;
+  couch.add(section1);
+
+  var section2 = new createCouchSection();
+  //section2.position.x = cp.couchWidth/2;
+  section2.position.x = 3 * cp.couchWidth/2;
+  couch.add(section2);
+
+  var section3 = new createCouchSection();
+  //section3.position.x = 3 * cp.couchWidth/2;
+  section3.position.x = 5 * cp.couchWidth/2;
+  couch.add(section3);
+
+  //Arm-rest
+  var armRest1 = new createArmRest();
+  //armRest1.position.set(cp.couchWidth*2, -cp.couchTopHeight/2 + cp.armRestRadius/2, cp.couchBaseDepth/2 - cp.couchTopDepth/2);
+  armRest1.position.set(cp.couchWidth*3, -cp.couchTopHeight/2 + cp.armRestRadius/2, cp.couchBaseDepth/2);
+  couch.add(armRest1);
+
+  var armRest2 = new createArmRest();
+  //armRest2.position.set(-cp.couchWidth, -cp.couchTopHeight/2 + cp.armRestRadius/2, cp.couchBaseDepth/2 - cp.couchTopDepth/2);
+  armRest2.position.set(0, -cp.couchTopHeight/2 + cp.armRestRadius/2, cp.couchBaseDepth/2);
+  couch.add(armRest2);
+
+
+  //Feet
+  var yPos = -(cp.couchTopHeight/2 + cp.couchBaseHeight + cp.couchFootHeight/2);
+
+  var foot1 = new createCouchFoot();
+  //foot1.position.set(-cp.couchWidth + cp.couchFootWidth/2, yPos, -cp.couchFootDepth/2);
+  foot1.position.set(cp.couchFootWidth/2, yPos, cp.couchFootDepth/2);
+  couch.add(foot1);
+
+  var foot2 = new createCouchFoot();
+  foot2.position.set(cp.couchFootWidth/2, yPos, cp.couchBaseDepth - cp.couchFootDepth/2);
+  couch.add(foot2);
+
+  var foot3 = new createCouchFoot();
+  foot3.position.set(3*cp.couchWidth - cp.couchFootWidth/2, yPos, cp.couchFootDepth/2);
+  couch.add(foot3);
+
+  var foot4 = new createCouchFoot();
+  foot4.position.set(3*cp.couchWidth - cp.couchFootWidth/2, yPos, cp.couchBaseDepth - cp.couchFootDepth/2);
+  couch.add(foot4);
+
+  couch.position.y = cp.couchTopHeight/2 + cp.couchBaseHeight + cp.couchFootHeight;
+  return couch;
+
+
+}
+
+//============================================
+var coffeeTableParams = {
+
+  ctWidth: 100,
+  ctHeight: 2,
+  ctDepth: 40,
+
+  ctLegWidth: 2,
+  ctLegHeight: 20,
+  ctLegDepth: 2,
+
+ // ctColor: 0x5b1d00,
+}
+
+function createCtLeg() {
+  var ctp = coffeeTableParams;
+  var ctLegGeom = new THREE.BoxGeometry(ctp.ctLegWidth, ctp.ctLegHeight, ctp.ctLegDepth);
+ // var ctLegMat = new THREE.MeshBasicMaterial({color:ctp.ctColor, side: THREE.DoubleSide});
+  var ctLegMesh = new THREE.Mesh(ctLegGeom, coffeeTableMaterial);
+
+  return ctLegMesh;
+}
+
+function createCoffeeTable() {
+
+  var ctp = coffeeTableParams;
+  var coffeeTable = new THREE.Object3D();
+
+  var ctTopGeom = new THREE.BoxGeometry(ctp.ctWidth, ctp.ctHeight, ctp.ctDepth);
+  //var ctTopMat = new THREE.MeshBasicMaterial({color:ctp.ctColor, side: THREE.DoubleSide});
+  var ctTopMesh = new THREE.Mesh(ctTopGeom, coffeeTableMaterial);
+
+  coffeeTable.add(ctTopMesh);
+
+  var y = -ctp.ctHeight/2 - ctp.ctLegHeight/2;
+
+  //Leg1
+  var leg1 = new createCtLeg();
+  leg1.position.x = (-ctp.ctWidth/2 + ctp.ctLegWidth/2) * 0.8;
+  leg1.position.y = y;
+  leg1.position.z = (ctp.ctDepth/2 - ctp.ctLegDepth/2) * 0.8;
+  coffeeTable.add(leg1);
+
+  //Leg2 
+  var leg2 = new createCtLeg();
+  leg2.position.x = (-ctp.ctWidth/2 + ctp.ctLegWidth/2) * 0.8;
+  leg2.position.y = y;
+  leg2.position.z = -(ctp.ctDepth/2 - ctp.ctLegDepth/2) * 0.8;
+  coffeeTable.add(leg2);
+
+  //Leg3 
+  var leg3 = new createCtLeg();
+  leg3.position.x = (ctp.ctWidth/2 - ctp.ctLegWidth/2) * 0.8;
+  leg3.position.y = y;
+  leg3.position.z = (ctp.ctDepth/2 - ctp.ctLegDepth/2) * 0.8;
+  coffeeTable.add(leg3);
+
+  //Leg4
+  var leg4 = new createCtLeg();
+  leg4.position.x = (ctp.ctWidth/2 - ctp.ctLegWidth/2) * 0.8;
+  leg4.position.y = y;
+  leg4.position.z = -(ctp.ctDepth/2 - ctp.ctLegDepth/2) * 0.8;
+  coffeeTable.add(leg4);
+
+  coffeeTable.position.y = ctp.ctLegHeight + ctp.ctHeight/2;
+
+  return coffeeTable;
+
+}
+
+//============================================
+var lampParams = {
+
+  baseRadius: 2, 
+  baseHeight: 20,
+  baseColor: new THREE.Color("gray"),
+
+  shadeRadius: 20, 
+  shadeHeight: 30,
+  shadeColor: 0xdbba7d,
+
+  bulbRadius: 5,
+
+}
+
+function createHangingLamp() {
+  var lp = lampParams;
+
+  var lamp = new THREE.Object3D();
+
+  var lampBaseGeom = new THREE.CylinderGeometry(lp.baseRadius, lp.baseRadius, lp.baseHeight, 10, 10);
+  var lampBaseMat = new THREE.MeshPhongMaterial({color: lp.baseColor, side: THREE.DoubleSide });
+  var lampBaseMesh = new THREE.Mesh(lampBaseGeom, lampBaseMat);
+  lamp.add(lampBaseMesh);
+
+  var lampShadeGeom = new THREE.ConeGeometry(lp.shadeRadius, lp.shadeHeight, 10, 10, true);
+  var lampShadeMat = new THREE.MeshLambertMaterial({color: lp.shadeColor, side: THREE.DoubleSide});
+  var lampShadeMesh = new THREE.Mesh(lampShadeGeom, lampShadeMat);
+
+  lampShadeMesh.position.y = -((lp.baseHeight/2 * 0.8) + lp.shadeHeight/2) ;
+  lamp.add(lampShadeMesh);
+
+  var bulbGeom = new THREE.SphereGeometry(lp.bulbRadius, 10, 10);
+  var bulbMat = new THREE.MeshLambertMaterial({color: 0xffffff});
+  var bulbMesh = new THREE.Mesh(bulbGeom, bulbMat);
+
+  bulbMesh.position.y = -lp.baseHeight;
+  lamp.add(bulbMesh);
+
+  lamp.position.y = -lp.baseHeight/2;
+
+  return lamp;
+
+}
+
+//============================================
+var magazineParams = {
+  magWidth: 8,
+  magHeight: 15,
+  magDepth: 1,
+}
+
+function createMagazines(magazineMaterials) {
+  var mp = magazineParams;
+
+  var magStack = new THREE.Object3D();
+
+  var magGeom1 = new THREE.BoxGeometry(mp.magWidth, mp.magHeight, mp.magDepth);
+  var magMat1 = magazineMaterials[0];
+  var magMesh1 = new THREE.Mesh(magGeom1, magMat1);
+
+  magMesh1.rotation.z = Math.PI/6;
+  magMesh1.position.x = -mp.magWidth;
+  magStack.add(magMesh1);
+
+  var magGeom2 = new THREE.BoxGeometry(mp.magWidth, mp.magHeight, mp.magDepth);
+  var magMat2 = magazineMaterials[1];
+  var magMesh2 = new THREE.Mesh(magGeom2, magMat2);
+
+  magMesh2.position.z = mp.magDepth/2;
+  magStack.add(magMesh2);
+
+  var magGeom3 = new THREE.BoxGeometry(mp.magWidth, mp.magHeight, mp.magDepth);
+  var magMat3 = magazineMaterials[2];
+  var magMesh3 = new THREE.Mesh(magGeom3, magMat3);
+
+  magMesh3.rotation.z = -Math.PI/6;
+  magMesh3.position.z = mp.magDepth;
+  magMesh3.position.x = mp.magWidth;
+  magStack.add(magMesh3);
+
+  magStack.rotation.x = Math.PI/2;
+  return magStack;
+
+}
+
+//============================================
+var iPodParams = {
+
+  ipodWidth: 3,
+  ipodHeight: 7, 
+  ipodDepth: 1,
+
+  iPodColor: new THREE.Color("white"),
+  iPodScreenColor: new THREE.Color("gray"),
+
+}
+
+var speakerParams = {
+
+  speakerWidth: 20,
+  speakerHeight: 15, 
+  speakerDepth: 2,
+  speakerMeshRadius: 4,
+
+  speakerColor: 0x6f7784,
+}
+
+var musicNoteParams = {
+  baseWidth: 2,
+
+  stemWidth: 1,
+  stemHeight: 7,
+  stemDepth: 0.1,
+
+  topWidth: 5,
+  topHeight: 1, 
+  topDepth: 0.1,
+
+  noteColor: new THREE.Color("black"),
+
+}
+
+function createMusicNote(top) {
+  var mnp = musicNoteParams;
+
+  var note = new THREE.Object3D();
+
+  var noteMat = new THREE.MeshBasicMaterial({color: mnp.noteColor, side: THREE.DoubleSide});
+  var baseGeom = new THREE.CircleGeometry(mnp.baseWidth, 20);
+  var baseMesh = new THREE.Mesh(baseGeom, noteMat);
+  note.add(baseMesh);
+
+  var stemGeom = new THREE.BoxGeometry(mnp.stemWidth, mnp.stemHeight, mnp.stemDepth);
+  var stemMesh = new THREE.Mesh(stemGeom, noteMat);
+
+  stemMesh.position.y = mnp.baseWidth/2 + mnp.stemHeight/2;
+  stemMesh.rotation.z = -Math.PI/20;
+  stemMesh.position.x = mnp.baseWidth/2;
+  note.add(stemMesh);
+
+  /*
+  var controlPoints = [ [0,0,0],
+                      [4,5,0],
+                      [8,-5,0],
+                      [10,0,0] ];
+
+  var topGeom = TW.createBezierCurve(controlPoints,20);
+  var topMat = new THREE.LineBasicMaterial( { color: mnp.noteColor,
+                                              linewidth: 100 } );
+  var top = new THREE.Line( topGeom, topMat );
+
+  top.position.set(mnp.baseWidth/2, mnp.baseWidth/2 + mnp.stemHeight - 1,0)
+  */
+  if (top) {
+    var topGeom = new THREE.BoxGeometry(mnp.topWidth, mnp.topHeight, mnp.topDepth);
+    var topMesh = new THREE.Mesh(topGeom, noteMat);
+
+    topMesh.position.set(mnp.baseWidth + mnp.topWidth/2 - 1, mnp.stemHeight + 0.5, 0);
+    topMesh.rotation.z = -Math.PI/20;
+    note.add(topMesh);
+  }
+
+  return note;
+
+}
+
+function createSingleMusicNote() {
+  var note = new createMusicNote(false);
+  musicNotes.push(note);
+  return note;
+}
+
+function createDoubleMusicNote() {
+
+  var doubleNote = new THREE.Object3D();
+
+  var note1 = new createMusicNote(true);
+  doubleNote.add(note1);
+
+  var note2 = new createMusicNote(false);
+  note2.position.x = musicNoteParams.topHeight + 4;
+  //note2.rotation.y = -Math.PI;
+  doubleNote.add(note2);
+
+  musicNotes.push(doubleNote);
+
+  return doubleNote;
+}
+
+function createIpod() {
+  var ip = iPodParams;
+
+  var ipod = new THREE.Object3D();
+  var ipodGeom = new THREE.BoxGeometry(ip.ipodWidth, ip.ipodHeight, ip.ipodDepth);
+  var ipodMat = new THREE.MeshLambertMaterial({color: ip.iPodColor, side: THREE.DoubleSide});
+  var ipodMesh = new THREE.Mesh(ipodGeom, ipodMesh);
+
+  ipod.add(ipodMesh);
+
+  var ipodScreenGeom = new THREE.BoxGeometry(ip.ipodWidth*0.75, ip.ipodHeight*0.5, 0.5);
+  var ipodScreenMat = new THREE.MeshLambertMaterial({color: ip.iPodScreenColor, side: THREE.DoubleSide});
+  var ipodScreenMesh = new THREE.Mesh(ipodScreenGeom, ipodScreenMat);
+
+  ipodScreenMesh.position.set(0, ip.ipodHeight*0.2, ip.ipodDepth/2);
+
+  ipod.add(ipodScreenMesh);
+
+  return ipod;
+}
+
+function createSpeaker() {
+
+  var sp = speakerParams;
+
+  var speakerGeom = new THREE.CircleGeometry(sp.speakerMeshRadius, 10);
+  var speaker = new THREE.Mesh(speakerGeom, speakerMaterial);
+
+  return speaker;
+
+}
+
+function createSpeakersStand() {
+  var sp = speakerParams;
+
+  var speakerStand = new THREE.Object3D();
+
+
+  var speakerGeom = new THREE.BoxGeometry(sp.speakerWidth, sp.speakerHeight, sp.speakerDepth);
+  var speakerMat = new THREE.MeshLambertMaterial({color: sp.speakerColor, side: THREE.DoubleSide});
+  var speakerMesh = new THREE.Mesh(speakerGeom, speakerMat);
+  speakerStand.add(speakerMesh);
+
+  var speakerStandGeom = new THREE.BoxGeometry(iPodParams.ipodWidth*1.1, sp.speakerHeight*0.1, sp.speakerDepth*2);
+  var speakerStandMat = new THREE.MeshLambertMaterial({color: sp.speakerColor, side: THREE.DoubleSide});
+  var speakerStandMesh = new THREE.Mesh(speakerStandGeom, speakerStandMesh);
+
+  speakerStandMesh.position.set(0, -sp.speakerHeight/2, sp.speakerDepth);
+  speakerStand.add(speakerStandMesh);
+
+  var speaker1 = new createSpeaker();
+  speaker1.position.set(-sp.speakerWidth*0.25, sp.speakerHeight*0.1, sp.speakerDepth * 0.55);
+  speakerStand.add(speaker1);
+
+  var speaker2 = new createSpeaker();
+  speaker2.position.set(sp.speakerWidth*0.25, sp.speakerHeight*0.1, sp.speakerDepth * 0.55);
+  speakerStand.add(speaker2);
+
+  return speakerStand;
+}
+
+function createIpodAndStand() {
+
+  var ipodAndStand = new THREE.Object3D();
+
+  var speakerStand = new createSpeakersStand();
+  ipodAndStand.add(speakerStand);
+
+  var ipod = new createIpod();
+  ipod.position.set(0, -speakerParams.speakerHeight/2 + iPodParams.ipodHeight/2, speakerParams.speakerDepth/2 + speakerParams.speakerDepth);
+
+  ipodAndStand.add(ipod);
+
+  ipodAndStand.position.y = speakerParams.speakerHeight/2 + speakerParams.speakerHeight*0.1;
+
+  //Notes
+  var note1 = new createSingleMusicNote();
+  note1.position.set(-speakerParams.speakerWidth * 0.6, speakerParams.speakerHeight * 0.8, 0);
+  note1.rotation.y = Math.PI;
+  ipodAndStand.add(note1);
+
+  var note2 = new createDoubleMusicNote();
+  note2.position.set(0 , speakerParams.speakerHeight * 1.1, 0);
+  ipodAndStand.add(note2);
+
+  var note3 = new createSingleMusicNote();
+  note3.position.set(speakerParams.speakerWidth * 0.6, speakerParams.speakerHeight * 0.8, 0);
+  ipodAndStand.add(note3);
+
+  return ipodAndStand;
+}
+
+//============================================
+var specialsParams = {
+
+  boardWidth: 100,
+  boardHeight: 90,
+  boardDepth: 1,
+
+  panelWidth: 3,
+
+}
+
+function createSpecials() {
+  var sp = specialsParams;
+  var specialsBoard = new THREE.Object3D();
+
+  var boardGeom = new THREE.BoxGeometry(sp.boardWidth, sp.boardHeight, sp.boardDepth);
+  var boardMesh = new THREE.Mesh(boardGeom, specialsMaterials[0]);
+
+  specialsBoard.add(boardMesh);
+
+  var panelMesh = specialsMaterials[1];
+
+  //Panel1
+  var verticalPanelGeom = new THREE.BoxGeometry(sp.panelWidth, sp.boardHeight + 2*sp.panelWidth, sp.boardDepth);
+  var panel1 = new THREE.Mesh(verticalPanelGeom, panelMesh);
+  var panel2 = new THREE.Mesh(verticalPanelGeom, panelMesh);
+
+  var horizontalPanelGeom = new THREE.BoxGeometry(sp.boardWidth + 2*sp.panelWidth, sp.panelWidth, sp.boardDepth);
+  var panel3 = new THREE.Mesh(horizontalPanelGeom, panelMesh);
+  var panel4 = new THREE.Mesh(horizontalPanelGeom, panelMesh);
+
+  panel1.position.set(-(sp.boardWidth/2 + sp.panelWidth/2), 0, 0);
+  panel2.position.set(sp.boardWidth/2 + sp.panelWidth/2, 0, 0);
+  panel3.position.set(0, sp.boardHeight/2 + sp.panelWidth/2, 0);
+  panel4.position.set(0, -(sp.boardHeight/2 + sp.panelWidth/2), 0);
+
+  specialsBoard.add(panel1);
+  specialsBoard.add(panel2);
+  specialsBoard.add(panel3);
+  specialsBoard.add(panel4);
+
+  return specialsBoard;
+
+}
+
+//============================================
+var shelfParams = {
+  shelfWidth: 120,
+  shelfHeight: 2,
+  shelfDepth: 10,
+
+}
+
+function createShelf() {
+
+  var sp = shelfParams;
+  var shelfGeom = new THREE.BoxGeometry(sp.shelfWidth, sp.shelfHeight, sp.shelfDepth);
+  var shelf = new THREE.Mesh(shelfGeom, shelfMaterial);
+
+  return shelf;
+}
+
+function createTotalShelf1() {
+  var shelf = new THREE.Object3D();
+
+  var shelfMesh = new createShelf();
+  shelf.add(shelfMesh);
+
+  var iterations = Math.floor(shelfParams.shelfWidth / (coffeeParams.coffeeMugWidth + coffeeParams.coffeeHandleHeight + 7));
+
+  var xPos = -shelfParams.shelfWidth/2 + coffeeParams.coffeeMugWidth/2 + 7;
+
+  for(i=0; i<iterations; i++) {
+
+    var coffeeMug = new createCoffeeMug(false, false);
+    coffeeMug.position.set(xPos, coffeeParams.coffeeMugHeight/2, 0);
+    coffeeMug.rotation.y = -Math.PI/6;
+    xPos += coffeeParams.coffeeMugWidth + coffeeParams.coffeeHandleHeight + 7;
+    shelf.add(coffeeMug);
+  }
+
+  return shelf;
+}
+
+
+//============================================
+var plantParams = {
+
+  potBottomRadius: 4,
+  potTopRadius: 5,
+  potHeight: 5,
+
+  barkRadius: 0.5,
+  barkHeight: 10,
+  barkColor: 0x7c2318, //new THREE.Color("brown"),
+
+}
+
+function createLeaf() {
+
+  var leafEllipse = new THREE.EllipseCurve(0, 0, 1, 5, 0, 2 * Math.PI, false, 0);
+  var points = leafEllipse.getPoints(50);
+  var leafGeom = new THREE.BufferGeometry().setFromPoints(points);
+  var mat = new THREE.LineBasicMaterial({color: new THREE.Color("green")});
+  var ellipse = new THREE.Line(leafGeom, mat);
+
+  return ellipse;
+}
+
+function createPlant() {
+  var pp = plantParams;
+
+  var plant = new THREE.Object3D();
+
+  var barkGeom = new THREE.CylinderGeometry(pp.barkRadius, pp.barkRadius, pp.barkHeight, 20, 20);
+  var barkMat = new THREE.MeshLambertMaterial({color: pp.barkColor, side: THREE.DoubleSide});
+  var barkMesh = new THREE.Mesh(barkGeom, barkMat);
+
+  plant.add(barkMesh);
+
+  //var leaf = new createLeaf();
+  //plant.add(leaf);
+  return plant;
+
+}
+
+function createPlantPot() {
+  var pp = plantParams;
+
+  var ppGeom = new THREE.CylinderGeometry(pp.potTopRadius, pp.potBottomRadius, pp.potHeight, 20, 20, true);
+  var ppMat = new THREE.MeshLambertMaterial({color: new THREE.Color("pink"), side: THREE.DoubleSide});
+  var ppMesh = new THREE.Mesh(ppGeom, ppMat);
+
+  return ppMesh;
+}
+
+function createPottedPlant() {
+  var pp = plantParams;
+  var pottedPlant = new THREE.Object3D();
+
+  //Plant pot
+  var pp = new createPlantPot();
+  pottedPlant.add(pp);
+
+  //Soil
+  var soilGeom = new THREE.CircleGeometry(plantParams.potTopRadius * 0.85, 200);
+  var soilMesh = new THREE.Mesh(soilGeom, soilMaterial);
+
+  soilMesh.rotation.x = Math.PI/2;
+  soilMesh.position.y = plantParams.potHeight* 0.15;
+  pottedPlant.add(soilMesh);
+
+  //Plant
+  var plant = new createPlant();
+  plant.position.y = plantParams.barkHeight/2 + plantParams.potHeight * 0.15;
+  pottedPlant.add(plant);
+
+  return pottedPlant;
+
+}
+
+//============================================
+var glassContainerParams = {
+
+  containerRadius: counterParams.counterDepth,
+  containerHeight: 120,
+
+  sideRadius:1,
+  sideColor: new THREE.Color("gray"),
+}
+
+function createContainerSide() {
+
+  var gcp = glassContainerParams;
+  var side = new THREE.Object3D();
+
+  var sideGeom = new THREE.TorusGeometry(gcp.containerRadius, gcp.sideRadius, 20, 20, Math.PI/2);
+  var sideMat = new THREE.MeshPhongMaterial({color: gcp.sideColor, side: THREE.DoubleSide});
+  var sideMesh = new THREE.Mesh(sideGeom, sideMat);
+
+  sideMesh.rotation.y = -Math.PI/2;
+  side.add(sideMesh);
+
+  var vertSideGeom = new THREE.CylinderGeometry(gcp.sideRadius, gcp.sideRadius, gcp.containerRadius, 20, 20);
+  var vertSideMesh = new THREE.Mesh(vertSideGeom, sideMat);
+  vertSideMesh.position.y = gcp.containerRadius/2;
+  side.add(vertSideMesh);
+
+  return side;
+}
+
+function createRod() {
+  var gcp = glassContainerParams;
+  
+  var rodGeom = new THREE.CylinderGeometry(gcp.sideRadius, gcp.sideRadius, gcp.containerHeight, 10, 10);
+  var rodMat = new THREE.MeshPhongMaterial({color: gcp.sideColor, side: THREE.DoubleSide});
+  var rodMesh = new THREE.Mesh(rodGeom, rodMat);
+
+  rodMesh.rotation.z = Math.PI/2;
+  return rodMesh;
+
+}
+
+function createGlassContainer() {
+
+  var gcp = glassContainerParams;
+  var container = new THREE.Object3D();
+
+
+  var containerGeom = new THREE.CylinderGeometry(gcp.containerRadius, gcp.containerRadius, gcp.containerHeight, 20, 20, false, 0, Math.PI/2);
+  var containerMat = new THREE.MeshPhongMaterial({color: 0xffffff, transparent: true, opacity: 0.2});
+  var containerMesh = new THREE.Mesh(containerGeom, containerMat);
+
+  containerMesh.rotation.z = Math.PI/2;
+  container.add(containerMesh);
+
+  var containerFloorGeom = new THREE.BoxGeometry(gcp.containerHeight, 1, gcp.containerRadius);
+  var containerFloorMat = new THREE.MeshLambertMaterial({color: new THREE.Color("gray"), side: THREE.DoubleSide});
+  var containerFloorMesh = new THREE.Mesh(containerFloorGeom, containerFloorMat);
+
+  containerFloorMesh.position.z = gcp.containerRadius/2;
+  container.add(containerFloorMesh);
+
+  //Top
+  var topRod = createRod();
+  topRod.position.y = gcp.containerRadius;
+  container.add(topRod);
+
+  //Bottom
+  var bottomRod = createRod();
+  bottomRod.position.z = gcp.containerRadius;
+  container.add(bottomRod);
+
+  //Side 1
+  var side1 = new createContainerSide();
+  side1.position.set(-gcp.containerHeight/2, 0, 0);
+  container.add(side1);
+
+  //Side 2
+  var side2 = new createContainerSide();
+  side2.position.set(gcp.containerHeight/2, 0, 0);
+  container.add(side2);
+
+
+  return container;
+
+}
+
+function createTotalContainer() {
+  var gcp = glassContainerParams;
+
+  var totalContainer = new THREE.Object3D();
+
+  var container = new createGlassContainer();
+  totalContainer.add(container);
+
+  //Cupcakes
+  var cupcake1 = new createCupcake(false);
+  cupcake1.position.set(gcp.containerHeight*0.4, cupcakeParams.cupcakeBaseHeight/2 + 1, gcp.containerRadius*0.35);
+  totalContainer.add(cupcake1);
+
+  var cupcake2 = new createCupcake(false);
+  cupcake2.position.set(gcp.containerHeight*0.3, cupcakeParams.cupcakeBaseHeight/2 + 1, gcp.containerRadius*0.35);
+  totalContainer.add(cupcake2);
+
+  var cupcake3 = new createCupcake(false);
+  cupcake3.position.set(gcp.containerHeight*0.2, cupcakeParams.cupcakeBaseHeight/2 + 1, gcp.containerRadius*0.35);
+  totalContainer.add(cupcake3);
+
+  var cupcake4 = new createCupcake(false);
+  cupcake4.position.set(gcp.containerHeight*0.4, cupcakeParams.cupcakeBaseHeight/2 + 1, gcp.containerRadius*0.7);
+  totalContainer.add(cupcake4);
+
+  var cupcake5 = new createCupcake(false);
+  cupcake5.position.set(gcp.containerHeight*0.3, cupcakeParams.cupcakeBaseHeight/2 + 1, gcp.containerRadius*0.7);
+  totalContainer.add(cupcake5);
+
+  var cupcake6 = new createCupcake(false);
+  cupcake6.position.set(gcp.containerHeight*0.2, cupcakeParams.cupcakeBaseHeight/2 + 1, gcp.containerRadius*0.7);
+  totalContainer.add(cupcake6);
+
+  //Cakes
+  var cake1 = new createCake(cakeColors.vanilla, cakeColors.strawberry);
+  cake1.position.set(0, cakeParams.cakeHeight/2 + 1, gcp.containerRadius * 0.5);
+  totalContainer.add(cake1);
+
+  var cake2 = new createCake(cakeColors.chocolate, cakeColors.chocolate);
+  cake2.position.set(-gcp.containerHeight*0.2, cakeParams.cakeHeight/2 + 1, gcp.containerRadius * 0.5);
+  totalContainer.add(cake2);
+
+  var cake3 = new createCake(cakeColors.vanilla, cakeColors.yellow);
+  cake3.position.set(-gcp.containerHeight*0.4, cakeParams.cakeHeight/2 + 1, gcp.containerRadius * 0.5);
+  totalContainer.add(cake3);
+
+  return totalContainer;
+}
+
+//============================================
+function createTotalCoffeeTable() {
+
+  var completeTable = new THREE.Object3D();
+
+  var coffeeTable = new createCoffeeTable();
+  completeTable.add(coffeeTable);
+
+  //Magazines
+  var magazineStack = new createMagazines(magazineMaterials);
+  magazineStack.rotation.z = Math.PI;
+
+  var y = coffeeTableParams.ctHeight + coffeeTableParams.ctLegHeight; //+ magazineParams.magDepth*2;
+
+  magazineStack.position.set(-coffeeTableParams.ctWidth/3, y + magazineParams.magDepth*2, -coffeeTableParams.ctDepth/5);
+
+  completeTable.add(magazineStack);
+
+  //Cake slice
+  var sliceOfCake = new createCakeSlice(cupcakeColors[0], cupcakeColors[1]);
+  sliceOfCake.position.y = y + plateParams.plateHeight/2;
+  completeTable.add(sliceOfCake);
+
+  //Coffee mug
+  var coffeeMug = new createCoffeeMug(true, true);
+  coffeeMug.position.set(coffeeTableParams.ctWidth*0.2, y + coffeeParams.coffeeMugHeight/2, -coffeeTableParams.ctDepth*0.2);
+  completeTable.add(coffeeMug);
+
+  return completeTable;
+}
+
+
+//============================================
+//Create the total scene (without the room mesh)
+
+function createScene() {
+
+  var totalScene = new THREE.Object3D();
+
+  //Counter
+  var counter = new createTotalCounter();
+  counter.position.z = -90;
+
+  totalScene.add(counter);
+
+  //Table Set 1
+  var tableSet1 = new createTableSet();
+  tableSet1.position.x = -roomParams.roomWidth/2 + 70;
+  totalScene.add(tableSet1);
+
+  //Table Set 2
+  var tableSet2 = new createTableSet();
+  tableSet2.position.x = -roomParams.roomWidth/2 + 70;
+  tableSet2.position.z = roomParams.roomDepth/3;
+  totalScene.add(tableSet2);
+
+  //Lamp
+  var lamp = new createHangingLamp();
+  lamp.position.y = roomParams.roomHeight - lampParams.baseHeight/2;
+  totalScene.add(lamp);
+
+  //Coffee table
+  var coffeeTable = new createTotalCoffeeTable();
+  coffeeTable.rotation.y = Math.PI/2;
+  coffeeTable.position.x = (roomParams.roomWidth * 0.20);
+  coffeeTable.position.z = (roomParams.roomDepth * 0.20);
+  //coffeeTable.position.set(0,0,0);
+  totalScene.add(coffeeTable);
+
+  //Couch
+  var couch = new createCouch();
+  couch.rotation.y = -Math.PI/2;
+  //couch.position.y = couchParams.couchTopHeight + couchParams.couchFootHeight;
+  //couch.position.set();
+  couch.position.x = roomParams.roomWidth/2;
+  couch.position.z = 0;
+  totalScene.add(couch);
+
+  //Window
+  var windowWall = new createWindow();
+  windowWall.rotation.y = Math.PI/2;
+  windowWall.position.set(-roomParams.roomWidth/2, roomParams.roomHeight/1.75, 0);
+  totalScene.add(windowWall);
+
+  //Specials
+  var specials = new createSpecials();
+  specials.position.set(-roomParams.roomWidth * 0.2, roomParams.roomHeight * 0.6, -roomParams.roomDepth/2);
+  totalScene.add(specials);
+
+  //Coffee mug shelves
+  var shelf1 = new createTotalShelf1();
+  shelf1.position.set(roomParams.roomWidth * 0.25, roomParams.roomHeight * 0.7, -roomParams.roomDepth/2 + shelfParams.shelfDepth/2);
+  totalScene.add(shelf1);
+
+  var shelf2 = new createTotalShelf1();
+  shelf2.position.set(roomParams.roomWidth * 0.25, roomParams.roomHeight * 0.55, -roomParams.roomDepth/2 + shelfParams.shelfDepth/2);
+  totalScene.add(shelf2);
+
+  //Picture frames
+  var frame1 = new createPictureFrame(40, 60, artMaterials[0]);
+  frame1.rotation.y = -Math.PI/2;
+  frame1.position.set(roomParams.roomWidth * 0.5, roomParams.roomHeight * 0.60, -roomParams.roomDepth * 0.05);
+
+  totalScene.add(frame1);
+
+  var frame2 = new createPictureFrame(60, 40, artMaterials[1]);
+  frame2.rotation.y = -Math.PI/2;
+  frame2.position.set(roomParams.roomWidth * 0.5, roomParams.roomHeight * 0.5, roomParams.roomDepth * 0.2);
+
+  totalScene.add(frame2);
+
+  var frame3 = new createPictureFrame(20, 30, artMaterials[2]);
+  frame3.rotation.y = -Math.PI/2;
+  frame3.position.set(roomParams.roomWidth * 0.5, roomParams.roomHeight * 0.78, roomParams.roomDepth * 0.38);
+
+  totalScene.add(frame3);
+
+  var frame4 = new createPictureFrame(30, 50, artMaterials[3]);
+  frame4.rotation.y = -Math.PI/2;
+  frame4.position.set(roomParams.roomWidth * 0.5, roomParams.roomHeight * 0.5, roomParams.roomDepth * 0.4);
+
+  totalScene.add(frame4);
+
+  var frame5 = new createPictureFrame(30, 40, artMaterials[4]);
+  frame5.rotation.y = -Math.PI/2;
+  frame5.position.set(roomParams.roomWidth * 0.5, roomParams.roomHeight * 0.75, roomParams.roomDepth * 0.20);
+
+  totalScene.add(frame5);
+
+  return totalScene;
+}
+
+//============================================
+//Lighting
+var ambientLight = new THREE.AmbientLight(0xFFFFFF, 1, 0);
+
+var directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+directionalLight.position.set(30,50,50);
+
+var spotlight = new THREE.SpotLight(0xFFFFFF, 0.2, 0, Math.atan(5/8)); 
+spotlight.position.set(0, roomParams.roomHeight - lampParams.baseHeight, 0);
+var target = new THREE.Object3D();
+target.position.set(0, -roomParams.roomHeight, 0);
+spotlight.target = target;
+
+//============================================
+
+var animationState = {
+  time: 0
+  //noteZRotation: 0,
+}
+var side = -1;
+var update = 0;
+
+//updateState
+function updateState(side, update) {
+
+  //Steam
+  for(var i=0; i<steamObjects.length; i++) {
+    steamObjects[i].rotation.y += Math.PI/20;
+  }
+
+  //Notes
+  if(update % 30 == 0) {
+    for(var j=0; j<musicNotes.length; j++) {
+      if(side == -1) { musicNotes[j].rotation.z = Math.PI/10 * side; }
+      else { musicNotes[j].rotation.z = 0; }
+    }
+  }
+
+  animationState.time += 1;
+}
+
+//start
+function firstState() {
+  resetAnimationState();
+  TW.render();
+}
+
+//reset
+function resetAnimationState() {
+  animationState.time = 0;
+}
+
+//One step
+function oneStep() {
+    update += 1;
+    if(update % 30 == 0 ) { side = -side};
+    updateState(side, update);
+    TW.render();
+}
+
+var animationId = null;                
+
+//Animate
+function animate(timestamp) {
+    oneStep();           // updates scene and renders
+    animationId = requestAnimationFrame(animate);
+}
+
+function stopAnimation() {
+    if ( animationId != null ) {
+        cancelAnimationFrame(animationId);
+    }
+}
+
+
+
+//============================================
+
+var scene = new THREE.Scene();
+
+var renderer = new THREE.WebGLRenderer();
+TW.mainInit(renderer, scene);
+
+var roomMaterials = [];
+var outsideViewMaterial; // = [];
+var magazineMaterials = [];
+var speakerMaterial;
+var specialsMaterials = [];
+var shelfMaterial;
+var sprinklesMaterial; 
+var cakeLayeredMaterial;
+var sofaMaterials = [];
+var coffeeTableMaterial;
+var soilMaterial;
+var plantMaterial;
+var frameMaterial;
+var artMaterials = [];
+
+TW.loadTextures(["wood-texture.jpg", "wallMaterial.jpg", "ceiling.jpg", "outsideView.jpg",
+                 "mag1.jpg", "mag2.jpg", "mag3.jpg",
+                 "speaker-mesh.jpg",
+                 "coffee-specials.jpg", "corkPanel.jpg",
+                 "shelf.jpg", 
+                 "sprinkles.jpg", "cake-layered.jpg", 
+                 "sofa-fabric.jpg",
+                 "couchFoot.jpg",
+                 "coffee-table.jpg",
+                 "soil.jpg", "plant.jpg",
+                 "frame-material.jpg",
+                 "art1.jpg", "art2.jpg", "art3.jpg", "art4.jpg", "art5.jpg"
+                 ],
+
+    function(textures) {
+
+      var material1 = new THREE.MeshPhongMaterial({map:textures[0], side: THREE.BackSide});
+      var material2 = new THREE.MeshLambertMaterial({map:textures[1], side: THREE.BackSide});
+
+      textures[2].wrapS = THREE.RepeatWrapping;
+      textures[2].wrapT = THREE.RepeatWrapping;
+      var material3 = new THREE.MeshLambertMaterial({map:textures[2], side: THREE.BackSide});
+
+      roomMaterials.push(material1);
+      roomMaterials.push(material2);
+      roomMaterials.push(material3);
+
+     
+      //var windowMat = new THREE.MeshBasicMaterial({map:textures[3], side: THREE.DoubleSide});
+      //windowMaterials.push(windowMat);
+
+      outsideViewMaterial = new THREE.MeshBasicMaterial({map:textures[3], side: THREE.DoubleSide});
+
+      var magMat1 = new THREE.MeshPhongMaterial({map:textures[4], side: THREE.DoubleSide});
+      var magMat2 = new THREE.MeshPhongMaterial({map:textures[5], side: THREE.DoubleSide});
+      var magMat3 = new THREE.MeshPhongMaterial({map:textures[6], side: THREE.DoubleSide});
+
+      magazineMaterials.push(magMat1);
+      magazineMaterials.push(magMat2);
+      magazineMaterials.push(magMat3);
+
+      speakerMaterial = new THREE.MeshLambertMaterial({map:textures[7]});
+
+      specialsMaterials.push(new THREE.MeshBasicMaterial({map:textures[8]}));
+      specialsMaterials.push(new THREE.MeshBasicMaterial({map:textures[9]}));
+
+      shelfMaterial = new THREE.MeshLambertMaterial({map:textures[10], side: THREE.DoubleSide});
+
+      sprinklesMaterial = new THREE.MeshBasicMaterial({map:textures[11], side: THREE.DoubleSide});
+      cakeLayeredMaterial = new THREE.MeshBasicMaterial({map:textures[12], side: THREE.DoubleSide});
+
+      sofaMaterials.push(new THREE.MeshLambertMaterial({map:textures[13], side: THREE.DoubleSide}));
+      sofaMaterials.push(new THREE.MeshLambertMaterial({map:textures[14], side: THREE.DoubleSide}))
+
+      coffeeTableMaterial = new THREE.MeshLambertMaterial({map:textures[15], side: THREE.DoubleSide});
+
+      soilMaterial = new THREE.MeshBasicMaterial({map:textures[16], side: THREE.DoubleSide});
+      plantMaterial = new THREE.MeshLambertMaterial({map:textures[17], side: THREE.DoubleSide});
+
+      frameMaterial = new THREE.MeshLambertMaterial({map:textures[18], side: THREE.DoubleSide});
+
+
+      artMaterials.push(new THREE.MeshBasicMaterial({map:textures[19], side: THREE.DoubleSide}));
+      artMaterials.push(new THREE.MeshBasicMaterial({map:textures[20], side: THREE.DoubleSide}));
+      artMaterials.push(new THREE.MeshBasicMaterial({map:textures[21], side: THREE.DoubleSide}));
+      artMaterials.push(new THREE.MeshBasicMaterial({map:textures[22], side: THREE.DoubleSide}));
+      artMaterials.push(new THREE.MeshBasicMaterial({map:textures[23], side: THREE.DoubleSide}));
+
+
+      //====================================================================================
+      var roomMesh = createRoom(roomMaterials);
+      scene.add(roomMesh);
+
+      var finalScene = new createScene();
+      scene.add(finalScene);
+
+      var pottedplant = new createPottedPlant();
+      //scene.add(pottedplant);
+
+      var frame = new createPictureFrame(4,5, artMaterials[0]);
+      //scene.add(frame);
+
+      TW.render();
+
+    }
+
+
+);
+
+scene.add(ambientLight);
+scene.add(directionalLight);
+scene.add(spotlight);
+scene.add(spotlight.target);
+
+TW.render();
+//Camera set up for the maximum possible dimensions
+TW.cameraSetup(renderer, scene, {minx:-100, maxx:100, miny:0, maxy:200, minz:-100, maxz:100} );
+//TW.cameraSetup(renderer, scene, {minx:-50, maxx:50, miny:-50, maxy:50, minz:-50, maxz:50} );
+//TW.cameraSetup(renderer, scene, {minx:-5, maxx:5, miny:0, maxy:5, minz:-5, maxz:5} );
+
+TW.setKeyboardCallback("0",firstState,"reset animation");
+TW.setKeyboardCallback("1",oneStep,"advance by one step");
+TW.setKeyboardCallback("g",animate,"go:  start animation");
+TW.setKeyboardCallback(" ",stopAnimation,"stop animation");
+
+</script>
+
+<h5>
+  
+  <div> ALL OF THE IMAGES USED IN THIS PROJECT WERE FOUND AT THE FOLLOWING LINKS: </div>
+
+  <div> wood.jpg: https://static.pexels.com/photos/139306/pexels-photo-139306.jpeg </div>
+
+  <div> wallMaterial.jpg: https://www.vandersandengroup.com/sites/default/files/images_brick_joint/vds_075_1024_1.jpg </div>
+
+  <div> ceiling.jpg: https://images.homedepot-static.com/productImages/d12b6c41-bdf2-4809-b1b2-a7512ea1216e/svn/semi-gloss-mono-serra-drop-ceiling-tiles-pantq22f-64_1000.jpg </div>
+  
+  <div> outsideView.jpg: http://hdw7.com/wallpapers/67/bright-sunny-day-yellow-field-sunflowers-sky-clouds-nature.jpg </div>
+
+  <div> Mag1.jpg: https://assets.vogue.com/photos/5891f846153ededd21da5438/master/pass/7-july-emma-watson_165255484705.jpg </div>
+
+  <div> Mag2.jpg: http://discovermagazine.com/~/media/Images/Issue%20Covers/2017/DSC-CV0517web.jpg </div>
+
+  <div> Mag3.jpg: https://image.isu.pub/121114180625-de187442c0ee4004813008f839c79f2a/jpg/page_1.jpg </div>
+
+  <div> speaker-mesh.jpg: https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX25599373.jpg </div>
+
+  <div> coffee-specials.jpg: Eva Hayek </div>
+
+  <div> corkPanel.jpg: http://www.publicdomainpictures.net/pictures/30000/velka/cork-board.jpg </div>
+
+  <div> shelf.jpg: https://www.textures.com/system/gallery/photos/Wood/Planks/Old%20Planks/113591/WoodPlanksOld0151_18_270.jpg </div>
+
+  <div> sprinkles.jpg: https://s3.amazonaws.com/spoonflower/public/design_thumbnails/0059/3547/rrrsprinkles_v2_shop_preview.png </div>
+
+  <div> cake-layered.jpg: https://4.bp.blogspot.com/-2WuBmNU06fA/UvnsyxZ0JxI/AAAAAAAASMo/MA3Bw67KaRY/s1600/IMG_1981.JPG (image was edited from this source) </div>
+
+  <div> sofa-fabric.jpg: https://scotweb-objects.com/images/tartans/moonbeam_36517.jpg </div>
+
+  <div> couchFoot.jpg: http://www.karndean.com/~/media/images/products/swatches/product-listing-images/product-overheads/korlok/rkp8106americanblackwalnutukoh.ashx?w=800&h=800&hash=DA753BE6F917A9F0B5D8F106B1D7390431D40C57 </div>
+
+  <div> coffee-table.jpg: http://www.smi-products.com/Ebony_-_EchoWood.JPG </div>
+
+  <div> soil.jpg: https://media.musely.com/u/14b420e1-ab62-40b8-950c-ea7f44bfa5a1.jpg </div>
+
+  <div> plant.jpg: https://inhabitat.com/wp-content/blogs.dir/1/files/2017/04/Leaf-Vein-Structures-889x593.jpg </div>
+
+  <div> frame-material.jpg: http://www.ispsd.com/wp-content/uploads/2013/02/wpid-4-High-Resolution-Wood-Material-Textures-Thumb03.jpg </div>
+
+  <div> art1.jpg: Audrey Elkus </div>
+
+  <div> art2.jpg: Audrey Elkus </div>
+
+  <div> art3.jpg: Maddie Poole </div>
+
+  <div> art4.jpg: Audrey Elkus </div>
+
+  <div> art5.jpg: Maddie Poole </div>
+
+</h5>
+
+</body>
+</html>
